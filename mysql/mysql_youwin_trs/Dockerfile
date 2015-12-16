@@ -13,13 +13,14 @@ ADD ./mysql-5.6.24.tar.gz       /root/tools/
 ADD ./install_mysql-5.6.24.sh   /root/tools/
 ADD ./create_mysql_user.sh      /create_mysql_user.sh
 WORKDIR /root/tools/
-VOLUME /data/server/mysql/
+VOLUME /data
 RUN sh install_mysql-5.6.24.sh
 ADD ./my.cnf    /data/server/mysql-5.6.24/etc/my.cnf
 RUN rm -rf /root/tools/mysql-5.6.24
 RUN rm -rf /root/tools/mysql-5.6.24.tar.gz
 RUN rm -rf /root/tools/cmake-3.2.2
 RUN rm -rf /root/tools/cmake-3.2.2.tar.gz
-RUN /usr/local/mysql/bin/mysqladmin-uroot -p password root
+RUN echo 'root:root' | chpasswd
+RUN sed  's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config
 EXPOSE 22 3306
-CMD ["/usr/bin/supervisord"]
+
